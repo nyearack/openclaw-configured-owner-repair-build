@@ -55,14 +55,19 @@ grep -q 'package/LICENSE' "$RUNNER_TEMP/inventory.txt"
 smoke=$(mktemp -d)
 mkdir -p "$smoke/home" "$smoke/state" "$smoke/prefix"
 export HOME="$smoke/home" OPENCLAW_STATE_DIR="$smoke/state" OPENCLAW_CONFIG_PATH="$smoke/config.json"
-npm install --prefix "$smoke/prefix" "$artifact" --no-audit --no-fund
+# Use npm bundled with the pinned Node toolchain, as canonical packaging does.
+# Bare npm on the runner can resolve a different npm12 that defers lifecycle scripts.
+toolchain_npm="$(dirname "$(command -v node)")/../lib/node_modules/npm/bin/npm-cli.js"
+node "$toolchain_npm" --version
+node "$toolchain_npm" install --prefix "$smoke/prefix" "$artifact" --no-audit --no-fund --foreground-scripts
+test ! -e "$smoke/prefix/node_modules/openclaw/.openclaw-lifecycle-pending"
 node "$smoke/prefix/node_modules/openclaw/openclaw.mjs" --version
 node "$smoke/prefix/node_modules/openclaw/openclaw.mjs" --help > "$RUNNER_TEMP/cli-help.txt"
 node --input-type=module - "$smoke/prefix/node_modules/openclaw/dist/build-info.json" "$candidate" <<'NODE'
 import fs from 'node:fs';
 const info = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 console.log(JSON.stringify(info));
-if (!JSON.stringify(info).includes(process.argv[3])) throw new Error('Build commit does not match candidate');
+if (info.commit !== process.argv[3] || info.version !== '2026.10.5') throw new Error('Build identity does not match candidate');
 NODE
 {
   echo '## Qualification passed'
