@@ -38,7 +38,7 @@ git add src
 git commit -m 'fix: retain independently current linked authority for configured owners'
 candidate=$(git rev-parse HEAD)
 echo "Candidate: $candidate"
-pnpm test src/channels/message-access/operator-authority.test.ts src/channels/message-access/participant-input.test.ts src/channels/message-access/message-access.test.ts src/channels/message-access/identifier-authentication.test.ts src/channels/message-access/runtime-identity.test.ts src/channels/message-access/child-session-publication.test.ts src/auto-reply/command-auth.test.ts
+pnpm test src/channels/message-access/operator-authority.test.ts src/channels/message-access/participant-input.test.ts src/channels/message-access/message-access.test.ts src/channels/message-access/identifier-authentication.test.ts src/channels/message-access/runtime-identity.test.ts src/channels/message-access/child-session-publication.test.ts src/auto-reply/command-auth.owner-default.test.ts src/auto-reply/reply/route-reply.recovery-owner.test.ts src/auto-reply/reply/get-reply.binding-route-owner.test.ts src/auto-reply/reply/get-reply.explicit-owner.test.ts src/gateway/server-plugin-in-process-dispatch.authorization.test.ts src/gateway/server-plugin-in-process-dispatch.scopes.test.ts src/gateway/server-plugin-in-process-dispatch.continuation.test.ts
 pnpm tsgo:core
 changed=(src/auto-reply/command-auth.ts src/channels/message-access/operator-assignment.test-support.ts src/channels/message-access/operator-authority.test.ts src/channels/message-access/participant-input.ts)
 node scripts/run-oxlint.mjs --type-aware --tsconfig config/tsconfig/oxlint.core.json "${changed[@]}"
