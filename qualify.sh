@@ -47,7 +47,8 @@ pnpm build:package
 mkdir -p "$RUNNER_TEMP/candidate"
 node scripts/package-openclaw-for-docker.mjs --skip-build --allow-unreleased-changelog --output-dir "$RUNNER_TEMP/candidate" --output-name openclaw-configured-owner-repair.tgz
 artifact="$RUNNER_TEMP/candidate/openclaw-configured-owner-repair.tgz"
-sha256sum "$artifact" | tee "$RUNNER_TEMP/candidate/SHA256SUMS"
+test "$(stat -c %s "$artifact")" -le 262140000
+(cd "$RUNNER_TEMP/candidate" && sha256sum openclaw-configured-owner-repair.tgz) | tee "$RUNNER_TEMP/candidate/SHA256SUMS"
 tar -tzf "$artifact" > "$RUNNER_TEMP/inventory.txt"
 ! grep -Eq '(^/|(^|/)\.\.(/|$)|(^|/)\.git/|(^|/)\.env$)' "$RUNNER_TEMP/inventory.txt"
 grep -q 'package/LICENSE' "$RUNNER_TEMP/inventory.txt"
@@ -75,5 +76,5 @@ NODE
   echo "Candidate: $candidate"
   echo 'Baseline failed by assertion; patched focused boundaries passed; core typecheck, changed-file type-aware lint, full package build, canonical package and isolated install/CLI smoke passed.'
   cat "$RUNNER_TEMP/candidate/SHA256SUMS"
-  echo 'Package intentionally not uploaded: free artifact storage entitlement is unverified. No activation performed.'
+  echo 'Validated software only: bounded artifact ready for one-day retention. No activation performed.'
 } >> "$GITHUB_STEP_SUMMARY"

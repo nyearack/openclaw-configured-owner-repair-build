@@ -21,6 +21,17 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: 24.21.0
-      - name: Qualify public source without stored artifacts or caches
+      - name: Qualify public source without caches
         shell: bash
         run: bash qualify.sh
+      - name: Retain only validated software for one day
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: openclaw-configured-owner-repair
+          path: |
+            ${{ runner.temp }}/candidate/openclaw-configured-owner-repair.tgz
+            ${{ runner.temp }}/candidate/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+          include-hidden-files: false

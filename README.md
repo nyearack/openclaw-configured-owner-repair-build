@@ -7,7 +7,7 @@ The patch contains only four source/test file changes. No source history, privat
 
 Manually dispatched workflow uses only the standard public ubuntu-24.04 runner (free compute), read-only repository token, no secrets, no cache, concurrency one, and a 90-minute timeout. It builds the canonical package, validates and disposable-installs it. It does not publish to npm or Releases or activate a Gateway.
 
-Artifact upload is deliberately absent: account shared-storage billing entitlement could not be verified with the available read-only billing access. The package remains ephemeral on the runner. A successful run qualifies software but does not make an installation artifact available. Artifact retention/upload must be added only after no-cost storage entitlement is established. Logs and job summaries are not billed artifact storage per GitHub Actions billing documentation.
+Artifact upload is limited to the validated software tarball and its basename-only SHA256SUMS, with a 250 MiB total ceiling and one-day retention. Dispatch requires independently verified free storage headroom and a zero-dollar overage budget; no billing settings are changed by this harness. Download and verify the candidate before expiry. Logs and job summaries are not billed artifact storage per GitHub Actions billing documentation.
 
 https://docs.github.com/en/billing/concepts/product-billing/github-actions
 
